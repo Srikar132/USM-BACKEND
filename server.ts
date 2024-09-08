@@ -11,9 +11,9 @@ class AppServer extends Server {
         super();
         this.app.use(express.json());
         this.app.use(cors({
-            origin: '*', // Your frontend domain
+            origin: 'https://user-management-system-five-indol.vercel.app/', 
             methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-            credentials: true, // Allow cookies if needed
+            credentials: true,
         }));
         this.app.options('/api/users/login', cors()); 
 
