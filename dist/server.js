@@ -11,12 +11,27 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
 dotenv_1.default.config();
+const allowedOrigins = [
+    'https://user-management-system-five-indol.vercel.app',
+    'https://user-management-system-8mtb4pr0a-srikar132s-projects.vercel.app'
+];
 class AppServer extends core_1.Server {
     constructor() {
         super();
         this.app.use(express_1.default.json());
         this.app.use((0, cors_1.default)({
-            origin: 'https://user-management-system-8mtb4pr0a-srikar132s-projects.vercel.app'
+            origin: function (origin, callback) {
+                if (!origin)
+                    return callback(null, true);
+                if (allowedOrigins.includes(origin)) {
+                    callback(null, true);
+                }
+                else {
+                    callback(new Error('Not allowed by CORS'));
+                }
+            },
+            methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+            credentials: true,
         }));
         this.setupDatabase();
         this.setupControllers();
@@ -24,7 +39,7 @@ class AppServer extends core_1.Server {
     setupDatabase() {
         const mongoURL = process.env.MONGO_URL || 'mongodb+srv://bunnyking828:sGfTbvMWAc1cKK7t@cluster0.qcx5r.mongodb.net/user-management-system';
         mongoose_1.default.connect(mongoURL).then(() => console.log("mongodb is connected"))
-            .catch((err) => console.log("mongodb connection failed ", err));
+            .catch((err) => console.log("mongodb connection failed", err));
     }
     setupControllers() {
         const userController = new UserController_1.UserController();
@@ -38,4 +53,4 @@ class AppServer extends core_1.Server {
     }
 }
 const appServer = new AppServer();
-appServer.start(8001);
+appServer.start(8002);
