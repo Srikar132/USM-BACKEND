@@ -6,14 +6,29 @@ import cors from 'cors'
 import dotenv from 'dotenv';
 import mongoose from "mongoose";
 dotenv.config();
+
+const allowedOrigins = [
+    'https://user-management-system-five-indol.vercel.app', 
+    'https://user-management-system-8mtb4pr0a-srikar132s-projects.vercel.app'
+];
 class AppServer extends Server {
     constructor() {
         super();
         this.app.use(express.json());
         this.app.use(cors({
-            origin: 'https://user-management-system-five-indol.vercel.app/', 
-            methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-            credentials: true,
+            origin: function (origin, callback) {
+                // If there's no origin (e.g. server-side or mobile app requests), allow it
+                if (!origin) return callback(null, true);
+
+                // Check if the origin is in the list of allowed origins
+                if (allowedOrigins.indexOf(origin) !== -1) {
+                    callback(null, true);
+                } else {
+                    callback(new Error('Not allowed by CORS'));
+                }
+            },
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            credentials: true
         }));
         this.app.options('/api/users/login', cors()); 
 
