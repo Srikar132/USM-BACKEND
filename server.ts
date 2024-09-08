@@ -10,7 +10,9 @@ class AppServer extends Server {
     constructor() {
         super();
         this.app.use(express.json());
-        this.app.use(cors());
+        this.app.use(cors({
+            origin: 'https://user-management-system-8mtb4pr0a-srikar132s-projects.vercel.app'
+          }));
         this.setupDatabase();
         this.setupControllers();
     }
