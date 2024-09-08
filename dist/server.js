@@ -15,7 +15,9 @@ class AppServer extends core_1.Server {
     constructor() {
         super();
         this.app.use(express_1.default.json());
-        this.app.use((0, cors_1.default)());
+        this.app.use((0, cors_1.default)({
+            origin: 'https://user-management-system-8mtb4pr0a-srikar132s-projects.vercel.app'
+        }));
         this.setupDatabase();
         this.setupControllers();
     }
@@ -36,4 +38,4 @@ class AppServer extends core_1.Server {
     }
 }
 const appServer = new AppServer();
-appServer.start(8000);
+appServer.start(8001);

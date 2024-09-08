@@ -40,4 +40,4 @@ class AppServer extends Server {
 }
 
 const appServer = new AppServer();
-appServer.start(8000);
+appServer.start(8002);

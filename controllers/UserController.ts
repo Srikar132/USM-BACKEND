@@ -11,17 +11,21 @@ interface AuthRequest extends Request {
 
 @Controller('api/users')
 export class UserController {
-
     @Post('register')
     public async register(req: Request, res: Response) {
         try {
             const { first_name, last_name, phone_number, gender, job_title, company, skills, username, email, password, bio, website, social_links } = req.body;
-
+    
+            // Ensure password is not undefined or empty
+            if (!password) {
+                return res.status(400).json({ message: 'Password is required' });
+            }
+    
             const existingUser = await User.findOne({ "basic_info.email": email });
             if (existingUser) {
                 return res.status(400).json({ message: `User already exists with email ${email}` });
             }
-
+    
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = new User({
                 basic_info: {
@@ -46,21 +50,23 @@ export class UserController {
                     social_links
                 }
             });
-
+    
             await user.save();
-
+    
             res.status(200).json({ message: 'User registered successfully' });
         } catch (error) {
             console.error("Error registering user:", error);
             res.status(400).json({ message: 'Error registering user', error });
         }
     }
+    
 
     @Post('login')
     public async loginUser(req: AuthRequest, res: Response) {
         try {
             const { email, password } = req.body;
             const user = await User.findOne({ "basic_info.email": email });
+    
             if (!user) {
                 return res.status(401).json({ message: "Invalid Credentials" });
             }
@@ -74,7 +80,6 @@ export class UserController {
                 return res.status(400).json({ message: "Incorrect Password" });
             }
     
-            // Update last login time
             user.security.last_login = new Date();
             await user.save();
     
@@ -99,11 +104,12 @@ export class UserController {
             }, process.env.JWT_SECRET!, { expiresIn: "1h" });
     
             return res.status(200).json({ token, message: "User logged in successfully" });
-        } catch (error) {
+        } catch (error : any) {
             console.error("Login error:", error);
-            res.status(400).json({ message: "Error logging in", error });
+            res.status(500).json({ message: "Error logging in", error: error.message });
         }
     }
+    
 
     @Put('update/:id')
     public async updateUser(req : Request , res : Response) {

@@ -32,6 +32,10 @@ let UserController = class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { first_name, last_name, phone_number, gender, job_title, company, skills, username, email, password, bio, website, social_links } = req.body;
+                // Ensure password is not undefined or empty
+                if (!password) {
+                    return res.status(400).json({ message: 'Password is required' });
+                }
                 const existingUser = yield userModel_1.User.findOne({ "basic_info.email": email });
                 if (existingUser) {
                     return res.status(400).json({ message: `User already exists with email ${email}` });
@@ -85,7 +89,6 @@ let UserController = class UserController {
                 if (!checkPassword) {
                     return res.status(400).json({ message: "Incorrect Password" });
                 }
-                // Update last login time
                 user.security.last_login = new Date();
                 yield user.save();
                 const token = jsonwebtoken_1.default.sign({
@@ -111,7 +114,7 @@ let UserController = class UserController {
             }
             catch (error) {
                 console.error("Login error:", error);
-                res.status(400).json({ message: "Error logging in", error });
+                res.status(500).json({ message: "Error logging in", error: error.message });
             }
         });
     }
