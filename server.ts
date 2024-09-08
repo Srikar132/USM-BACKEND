@@ -11,33 +11,7 @@ class AppServer extends Server {
     constructor() {
         super();
         this.app.use(express.json());
-        this.app.use(cors({
-            origin: function (origin: string | undefined, callback: (err: Error | null, origin?: boolean) => void) {
-                if (!origin) {
-                    // Allow requests with no origin (like mobile apps or Postman)
-                    return callback(null, true);
-                }
-        
-                const allowedOrigins = [
-                    'https://user-management-system-five-indol.vercel.app',
-                    'https://user-management-system-8mtb4pr0a-srikar132s-projects.vercel.app'
-                ];
-        
-                if (allowedOrigins.indexOf(origin) !== -1) {
-                    // If origin is in allowedOrigins array, allow the request
-                    return callback(null, true);
-                } else {
-                    // If origin is not allowed, block the request
-                    return callback(new Error('Not allowed by CORS'));
-                }
-            },
-            methods: ['GET', 'POST', 'PUT', 'DELETE'],
-            credentials: true,
-        }));
-        
-        // Allow preflight requests
-        this.app.options('*', cors());
-
+        this.app.use(cors());
         this.setupDatabase();
         this.setupControllers();
     }
