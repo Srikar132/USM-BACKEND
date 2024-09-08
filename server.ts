@@ -11,7 +11,7 @@ class AppServer extends Server {
         super();
         this.app.use(express.json());
         this.app.use(cors({
-            origin: 'https://user-management-system-8mtb4pr0a-srikar132s-projects.vercel.app', // Your frontend domain
+            origin: '*', // Your frontend domain
             methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
             credentials: true, // Allow cookies if needed
         }));
